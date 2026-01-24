@@ -40,7 +40,7 @@ export const LoaderProvider = ({ children }: { children: ReactNode }) => {
           }}
           className="justify-center items-center bg-black/30"
         >
-          <View className="bg-gray-50 p-8 rounded-3xl shadow-xl">
+          <View className="bg-gray-50 p-8 rounded-3xl shadow-xl" style={{ marginTop: 130 }} >
             <ActivityIndicator size="large" color="#1e40af" />
           </View>
         </View>
