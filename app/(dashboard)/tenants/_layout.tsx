@@ -8,6 +8,7 @@ export default function TenantsLayout() {
         headerStyle: { backgroundColor: '#f8fafc' }, 
         headerTitleStyle: { fontWeight: '900', fontSize: 20, color: '#1e293b' },
         animation: 'slide_from_right',
+        headerShown: false
       }}
     >
       <Stack.Screen name="index" options={{ title: 'My Tenants' }} />

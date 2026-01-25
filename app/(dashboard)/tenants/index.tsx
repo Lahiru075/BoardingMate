@@ -1,89 +1,102 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Dimensions } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet, Dimensions, StatusBar } from 'react-native'
 import React, { useState } from 'react'
 import { MaterialIcons, Ionicons, Feather } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 
 const { width } = Dimensions.get('window');
 
-
 const dummyTenants = [
-  { id: '1', name: 'Kasun Perera', roomNo: 'Room 01', status: 'Paid', rent: '8500' },
-  { id: '2', name: 'Nimal Sirisena', roomNo: 'Room 02', status: 'Pending', rent: '8000' },
-  { id: '3', name: 'Amal Silva', roomNo: 'Room 01', status: 'Paid', rent: '8500' },
-  { id: '4', name: 'Saman Kumara', roomNo: 'Room 03', status: 'Pending', rent: '9000' },
+  { id: '1', name: 'Kasun Perera', roomNo: 'Room 01', status: 'Paid', rent: '8,500' },
+  { id: '2', name: 'Nimal Sirisena', roomNo: 'Room 02', status: 'Pending', rent: '8,000' },
+  { id: '3', name: 'Amal Silva', roomNo: 'Room 01', status: 'Paid', rent: '8,500' },
+  { id: '4', name: 'Saman Kumara', roomNo: 'Room 03', status: 'Pending', rent: '9,000' },
 ];
 
 const TenantList = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const renderTenantCard = ({ item }: any) => (
-    <TouchableOpacity 
-      style={styles.card}
-    //   onPress={() => router.push(`/(dashboard)/tenants/${item.id}`)}
-    >
-      <View style={styles.cardLeft}>
-        <View style={[styles.avatar, { backgroundColor: item.status === 'Paid' ? '#dcfce7' : '#fee2e2' }]}>
-          <Text style={[styles.avatarText, { color: item.status === 'Paid' ? '#16a34a' : '#dc2626' }]}>
-            {item.name.charAt(0)}
-          </Text>
-        </View>
-        <View style={styles.info}>
-          <Text style={styles.tenantName}>{item.name}</Text>
-          <View style={styles.roomBadge}>
-            <Text style={styles.roomText}>{item.roomNo}</Text>
+  const renderTenantCard = ({ item }: any) => {
+    const isPaid = item.status === 'Paid';
+    return (
+      <TouchableOpacity 
+        // onPress={() => router.push(`/(dashboard)/tenants/${item.id}`)}
+        style={styles.card}
+      >
+        <View style={styles.cardLeft}>
+          <View style={[styles.avatar, { backgroundColor: isPaid ? '#dcfce7' : '#fee2e2' }]}>
+            <Text style={[styles.avatarText, { color: isPaid ? '#16a34a' : '#dc2626' }]}>
+              {item.name.charAt(0)}
+            </Text>
+          </View>
+          <View style={styles.info}>
+            <Text style={styles.tenantName}>{item.name}</Text>
+            <Text style={styles.roomNo}>{item.roomNo}</Text>
           </View>
         </View>
-      </View>
 
-      <View style={styles.cardRight}>
-        <Text style={styles.rentText}>Rs. {item.rent}</Text>
-        <View style={[styles.statusDot, { backgroundColor: item.status === 'Paid' ? '#10b981' : '#ef4444' }]} />
-      </View>
-    </TouchableOpacity>
-  );
+        <View style={styles.cardRight}>
+          <Text style={styles.rentText}>Rs. {item.rent}</Text>
+          <View style={[styles.statusDot, { backgroundColor: isPaid ? '#10b981' : '#ef4444' }]} />
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
-      
-      {/* 1. SEARCH BAR */}
-      <View style={styles.searchSection}>
+      <StatusBar barStyle="light-content" />
+
+      {/* 1. PREMIUM BLUE HEADER */}
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.headerSub}>MANAGEMENT</Text>
+            <Text style={styles.headerTitle}>My Tenants</Text>
+          </View>
+          <View style={styles.iconBox}>
+            <Ionicons name="people" size={24} color="white" />
+          </View>
+        </View>
+
+        {/* 2. FLOATING SEARCH BAR */}
         <View style={styles.searchContainer}>
           <Feather name="search" size={20} color="#94a3b8" />
           <TextInput
             placeholder="Search by name or room..."
+            placeholderTextColor="#94a3b8"
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
         </View>
-        <TouchableOpacity style={styles.filterBtn}>
-           <Ionicons name="filter" size={20} color="white" />
-        </TouchableOpacity>
       </View>
 
-      {/* 2. LIST SECTION */}
-      <FlatList
-        data={dummyTenants}
-        renderItem={renderTenantCard}
-        keyExtractor={item => item.id}
-        contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyBox}>
-            <Text style={styles.emptyText}>No tenants found.</Text>
-          </View>
-        }
-      />
+      {/* 3. TENANT LIST */}
+      <View style={styles.listContainer}>
+        <FlatList
+          data={dummyTenants}
+          renderItem={renderTenantCard}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <View style={styles.listHeader}>
+              <Text style={styles.listHeaderTitle}>Active Residents</Text>
+              <Text style={styles.listHeaderCount}>{dummyTenants.length} Total</Text>
+            </View>
+          }
+        />
+      </View>
 
-      {/* 3. FLOATING ACTION BUTTON (FAB) */}
+      {/* 4. FAB (Add Button) */}
       <TouchableOpacity 
+        activeOpacity={0.8}
+        onPress={() => router.push('/(dashboard)/tenants/form')}
         style={styles.fab}
-        // onPress={() => router.push('/(dashboard)/tenants/form')}
       >
-        <MaterialIcons name="person-add" size={28} color="white" />
+        <Ionicons name="person-add" size={28} color="white" />
       </TouchableOpacity>
-
     </View>
   )
 }
@@ -91,56 +104,75 @@ const TenantList = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8fafc' },
   
-  searchSection: { 
-    flexDirection: 'row', 
-    paddingHorizontal: 20, 
-    paddingVertical: 15, 
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    elevation: 2
+  // Header Styles
+  header: {
+    backgroundColor: '#2563eb',
+    paddingTop: 60,
+    paddingBottom: 40,
+    paddingHorizontal: 25,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
+    elevation: 10,
+    shadowColor: '#2563eb',
+    shadowOpacity: 0.2,
+    shadowRadius: 15,
   },
+  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 25 },
+  headerSub: { color: '#bfdbfe', fontSize: 11, fontWeight: 'bold', letterSpacing: 2 },
+  headerTitle: { color: 'white', fontSize: 28, fontWeight: '900' },
+  iconBox: { backgroundColor: 'rgba(255,255,255,0.2)', padding: 10, borderRadius: 15 },
+  
+  // Search Bar Styles
   searchContainer: {
-    flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#f1f5f9',
-    borderRadius: 15,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
     alignItems: 'center',
-    marginRight: 10
+    backgroundColor: 'white',
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
   },
-  searchInput: { flex: 1, marginLeft: 10, fontSize: 14, color: '#1e293b' },
-  filterBtn: { backgroundColor: '#2563eb', padding: 12, borderRadius: 15 },
+  searchInput: { flex: 1, marginLeft: 10, fontSize: 15, color: '#1e293b', fontWeight: '500' },
 
+  // List Styles
+  listContainer: { flex: 1, marginTop: -20 },
+  listContent: { paddingHorizontal: 25, paddingTop: 30, paddingBottom: 100 },
+  listHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15, paddingHorizontal: 5 },
+  listHeaderTitle: { color: '#94a3b8', fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1 },
+  listHeaderCount: { color: '#2563eb', fontSize: 12, fontWeight: 'bold' },
+
+  // Card Styles
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 24,
-    padding: 18,
+    backgroundColor: 'white',
+    borderRadius: 25,
+    padding: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 15,
     elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
+    borderWidth: 1,
+    borderColor: '#f1f5f9',
   },
   cardLeft: { flexDirection: 'row', alignItems: 'center' },
   avatar: { width: 50, height: 50, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   avatarText: { fontSize: 20, fontWeight: 'bold' },
   info: { marginLeft: 15 },
-  tenantName: { fontSize: 16, fontWeight: '900', color: '#1e293b' },
-  roomBadge: { backgroundColor: '#f1f5f9', alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, marginTop: 4 },
-  roomText: { fontSize: 11, color: '#64748b', fontWeight: 'bold' },
-
+  tenantName: { fontSize: 16, fontWeight: 'bold', color: '#1e293b' },
+  roomNo: { color: '#94a3b8', fontSize: 11, fontWeight: 'bold', marginTop: 2, textTransform: 'uppercase' },
+  
   cardRight: { alignItems: 'flex-end' },
-  rentText: { fontSize: 15, fontWeight: '800', color: '#1e293b', marginBottom: 5 },
-  statusDot: { width: 10, height: 10, borderRadius: 5 },
+  rentText: { fontSize: 15, fontWeight: '800', color: '#1e293b' },
+  statusDot: { width: 8, height: 8, borderRadius: 4, marginTop: 8 },
 
+  // FAB Styles
   fab: {
     position: 'absolute',
     bottom: 30,
-    right: 30,
+    right: 25,
     backgroundColor: '#2563eb',
     width: 65,
     height: 65,
@@ -150,10 +182,8 @@ const styles = StyleSheet.create({
     elevation: 8,
     shadowColor: '#2563eb',
     shadowOpacity: 0.3,
-    shadowRadius: 10
-  },
-  emptyBox: { alignItems: 'center', marginTop: 50 },
-  emptyText: { color: '#94a3b8', fontSize: 16 }
+    shadowRadius: 10,
+  }
 });
 
 export default TenantList
