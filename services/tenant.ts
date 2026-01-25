@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where, writeBatch } from "firebase/firestore";
 import { db } from "./firebase";
 import { getAuth } from "firebase/auth";
 
@@ -102,3 +102,29 @@ export const updateTenant = async (tenantId: string, updatedData: any) => {
     await updateDoc(docRef, updatedData);
 
 }
+
+export const distributeBills = async (roomNo: string, totalElec: number, totalWater: number) => {
+    const q = query(
+        collection(db, "tenants"),
+        where("roomNo", "==", roomNo)
+    );
+
+    const snapshot = await getDocs(q);
+
+    const tenantCount = snapshot.docs.length;
+
+    if (tenantCount === 0) {
+        console.log("No tenants in this room");
+        return;
+    }
+
+    const elecShare = totalElec / tenantCount;
+    const waterShare = totalWater / tenantCount;
+
+    snapshot.docs.forEach(async (doc) => {
+        await updateDoc(doc.ref, {
+            electricityShare: elecShare,
+            waterShare: waterShare,
+        });
+    });
+};
