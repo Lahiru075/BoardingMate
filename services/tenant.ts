@@ -1,5 +1,9 @@
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { auth, db } from "./firebase";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
+import { db } from "./firebase";
+import { getAuth } from "firebase/auth";
+
+const auth = getAuth();
+const tenantsCollection = collection(db, "tenants");
 
 export const addTenant = async (tenantData: {
     name: string;
@@ -16,9 +20,7 @@ export const addTenant = async (tenantData: {
             throw new Error("User not authenticated");
         }
 
-        const tenantsRef = collection(db, "tenants");
-
-        const newDoc = await addDoc(tenantsRef, {
+        const newDoc = await addDoc(tenantsCollection, {
             ...tenantData,
             userId: user.uid,
             electricityShare: 0,
@@ -32,4 +34,71 @@ export const addTenant = async (tenantData: {
     } catch (error: any) {
         console.log("Error adding tenants..")
     }
+}
+
+export const getAllTenantsByUserId = async () => {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+
+    const q = query(tenantsCollection, where("userId", "==", user.uid));
+
+    const spanshot = await getDocs(q);
+
+    return spanshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+}
+
+export const getTenantById = async (tenantId: string) => {
+    const docRef = doc(db, "tenants", tenantId);
+    const spanshot = await getDoc(docRef);
+
+    if (spanshot.exists()) {
+        return spanshot.data();
+    }
+
+    return null;
+}
+
+export const markAsPaid = async (tenantId: string) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+
+    const docRef = doc(db, "tenants", tenantId);
+    await updateDoc(docRef, {
+        lastPaidDate: serverTimestamp(),
+        electricityShare: 0,
+        waterShare: 0,
+    });
+
+}
+
+export const deleteTenant = async (tenantId: string) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+
+    const docRef = doc(db, "tenants", tenantId);
+    await deleteDoc(docRef);
+}
+
+export const updateTenant = async (tenantId: string, updatedData: any) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+
+    const docRef = doc(db, "tenants", tenantId);
+    await updateDoc(docRef, updatedData);
+
 }

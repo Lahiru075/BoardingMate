@@ -14,6 +14,7 @@ export default function TenantsLayout() {
       <Stack.Screen name="index" options={{ title: 'My Tenants' }} />
       <Stack.Screen name="form" options={{ title: 'Add New Tenant' }} />
       <Stack.Screen name="[id]" options={{ title: 'Tenant Details' }} />
+      <Stack.Screen name="[id]/edit" options={{ title: 'Edit Tenant' }} />
     </Stack>
   );
 }
