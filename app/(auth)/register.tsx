@@ -47,7 +47,7 @@ const Register = () => {
         try {
             await registation(fullName, email, password);
             Alert.alert("Success", "Registration Successful!");
-            router.replace('/home');
+            router.replace('/login');
         } catch (error: any) {
             Alert.alert("Registration Failed", error.message);
         } finally {

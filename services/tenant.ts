@@ -64,21 +64,19 @@ export const getTenantById = async (tenantId: string) => {
     return null;
 }
 
-export const markAsPaid = async (tenantId: string) => {
-    const user = auth.currentUser;
+export const markAsPaid = async (id: string) => {
+    const docRef = doc(db, "tenants", id);
+    
+    const now = new Date();
+    const yearMonth = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
 
-    if (!user) {
-        throw new Error("User not authenticated");
-    }
-
-    const docRef = doc(db, "tenants", tenantId);
     await updateDoc(docRef, {
-        lastPaidDate: serverTimestamp(),
-        electricityShare: 0,
-        waterShare: 0,
+        lastPaidMonth: yearMonth, 
+        lastPaidDate: now.toISOString(),
+        electricityShare: 0, 
+        waterShare: 0
     });
-
-}
+};
 
 export const deleteTenant = async (tenantId: string) => {
     const user = auth.currentUser;
@@ -104,27 +102,45 @@ export const updateTenant = async (tenantId: string, updatedData: any) => {
 }
 
 export const distributeBills = async (roomNo: string, totalElec: number, totalWater: number) => {
-    const q = query(
-        collection(db, "tenants"),
-        where("roomNo", "==", roomNo)
-    );
+    // get all tenants in this room
+    const q = query(collection(db, "tenants"), where("roomNo", "==", roomNo));
+    const querySnapshot = await getDocs(q);
+    
+    const count = querySnapshot.size;
+    if (count === 0) throw new Error("No tenants found in this room!");
 
-    const snapshot = await getDocs(q);
+    // get current month (Eg: "2026-01")
+    const now = new Date();
+    const currentMonthStr = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
 
-    const tenantCount = snapshot.docs.length;
+    // check if anyone has paid for this month
+    let hasAnyonePaid = false;
+    let paidTenantName = "";
 
-    if (tenantCount === 0) {
-        console.log("No tenants in this room");
-        return;
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.lastPaidMonth === currentMonthStr) {
+            hasAnyonePaid = true;
+            paidTenantName = data.name; // capture the name
+        }
+    });
+
+    // if anyone has paid.. throw error
+    if (hasAnyonePaid) {
+        throw new Error(`Cannot add bills! ${paidTenantName} has already paid for this month.`);
     }
 
-    const elecShare = totalElec / tenantCount;
-    const waterShare = totalWater / tenantCount;
+    // if no one has paid.. distribute the bills
+    const elecShare = totalElec / count;
+    const waterShare = totalWater / count;
 
-    snapshot.docs.forEach(async (doc) => {
-        await updateDoc(doc.ref, {
+    const batch = writeBatch(db);
+    querySnapshot.forEach((doc) => {
+        batch.update(doc.ref, {
             electricityShare: elecShare,
-            waterShare: waterShare,
+            waterShare: waterShare
         });
     });
+
+    await batch.commit();
 };
