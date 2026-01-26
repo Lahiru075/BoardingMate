@@ -1,9 +1,25 @@
 import useLoader from '@/hooks/useLoader'
 import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
-import { Alert, Keyboard, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, ScrollView } from 'react-native'
-import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons'
+import { 
+  Alert, 
+  Keyboard, 
+  KeyboardAvoidingView, 
+  Platform, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  TouchableWithoutFeedback, 
+  View, 
+  StatusBar, 
+  StyleSheet, 
+  Dimensions,
+  ScrollView 
+} from 'react-native'
+import { MaterialIcons, Ionicons } from '@expo/vector-icons'
 import { registation } from '@/services/auth'
+
+const { width, height } = Dimensions.get('window');
 
 const Register = () => {
     const router = useRouter()
@@ -28,13 +44,9 @@ const Register = () => {
         }
 
         showLoader()
-
         try {
-
             await registation(fullName, email, password);
-
             Alert.alert("Success", "Registration Successful!");
-
             router.replace('/home');
         } catch (error: any) {
             Alert.alert("Registration Failed", error.message);
@@ -44,159 +56,254 @@ const Register = () => {
     }
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            className="flex-1"
-        >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View className="flex-1 bg-gray-50">
+        <View style={styles.container}>
+            <StatusBar barStyle="dark-content" />
 
-                    {/* Header Section */}
-                    <View className="bg-blue-600 h-[35%] rounded-b-[50px] items-center justify-center pt-8">
-                        <View className="bg-white/20 p-3 rounded-full mb-3">
-                            <FontAwesome5 name="house-user" size={40} color="white" />
-                        </View>
-                        <Text className="text-white text-3xl font-bold tracking-wider">BoardingMate</Text>
-                        <Text className="text-blue-100 text-sm mt-1">Landlord's Best Friend</Text>
-                    </View>
+            {/* BACKGROUND DECORATIONS */}
+            <View style={styles.bgCircleTop} />
+            <View style={styles.bgCircleBottom} />
 
-                    {/* Form Container */}
-                    <View className="px-6 -mt-20">
-                        <ScrollView showsVerticalScrollIndicator={false} bounces={false} contentContainerStyle={{ paddingBottom: 40 }}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.keyboardView}
+            >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
+                        <View style={styles.inner}>
 
-                            <View className="bg-white rounded-3xl shadow-xl p-8 mb-6">
-
-                                <View className="items-center mb-6">
-                                    <Text className="text-2xl font-bold text-gray-800">Create Account</Text>
-                                    <Text className="text-gray-500 text-sm mt-1">Join us to manage your property</Text>
+                            {/* 1. TOP SECTION (LOGO & BRANDING) */}
+                            <View style={styles.topSection}>
+                                <View style={styles.logoCircle}>
+                                    <Ionicons name="person-add" size={32} color="#FF5A5F" />
                                 </View>
+                                <Text style={styles.brandTitle}>
+                                    Boarding<Text style={{ color: '#FF5A5F' }}>Mate</Text>
+                                </Text>
+                                <Text style={styles.brandTagline}>SMART PROPERTY MANAGEMENT</Text>
+                            </View>
 
-                                <View className="space-y-4">
-                                    {/* Full Name */}
-                                    <View className='mb-3'>
-                                        <Text className="text-gray-600 ml-1 text-xs font-bold uppercase ">
-                                            Full Name
-                                        </Text>
-
-                                        <View className="flex-row items-center border border-gray-200 rounded-xl px-4 py-1 bg-gray-50">
-                                            <MaterialIcons name="person-outline" size={18} color="#6B7280" />
-
+                            {/* 2. FORM CONTAINER */}
+                            <View style={styles.formWrapper}>
+                                <View style={styles.card}>
+                                    
+                                    <View style={styles.cardHeader}>
+                                        <Text style={styles.welcomeText}>Create Account</Text>
+                                        <Text style={styles.subText}>Fill the details to join BoardingMate</Text>
+                                    </View>
+                                    
+                                    <View style={styles.inputsArea}>
+                                        {/* Full Name */}
+                                        <View style={styles.inputContainer}>
+                                            <MaterialIcons name="person-outline" size={18} color="#A0A0A0" />
                                             <TextInput
                                                 value={fullName}
                                                 onChangeText={setFullName}
-                                                placeholder="Enter your full name"
-                                                className="flex-1 ml-3 text-gray-700 text-sm font-medium"
+                                                placeholder="Full Name"
+                                                placeholderTextColor="#A0A0A0"
+                                                style={styles.input}
                                             />
                                         </View>
-                                    </View>
 
-                                    {/* Email Address */}
-                                    <View className='mb-3'>
-                                        <Text className="text-gray-600 ml-1 text-xs font-bold uppercase">
-                                            Email Address
-                                        </Text>
-
-                                        <View className="flex-row items-center border border-gray-200 rounded-xl px-4 py-1 bg-gray-50">
-                                            <MaterialIcons name="mail-outline" size={18} color="#6B7280" />
-
+                                        {/* Email */}
+                                        <View style={styles.inputContainer}>
+                                            <MaterialIcons name="mail-outline" size={18} color="#A0A0A0" />
                                             <TextInput
                                                 value={email}
                                                 onChangeText={setEmail}
-                                                placeholder="Enter your email"
+                                                placeholder="Email Address"
+                                                placeholderTextColor="#A0A0A0"
                                                 keyboardType="email-address"
                                                 autoCapitalize="none"
-                                                className="flex-1 ml-3 text-gray-700 text-sm font-medium"
+                                                style={styles.input}
                                             />
                                         </View>
-                                    </View>
 
-
-                                    {/* Password */}
-                                    <View className='mb-3'>
-                                        <Text className="text-gray-600 ml-1 text-xs font-bold uppercase">
-                                            Password
-                                        </Text>
-
-                                        <View className="flex-row items-center border border-gray-200 rounded-xl px-4 py-1 bg-gray-50">
-                                            <MaterialIcons name="lock-outline" size={18} color="#6B7280" />
-
+                                        {/* Password */}
+                                        <View style={styles.inputContainer}>
+                                            <MaterialIcons name="lock-outline" size={18} color="#A0A0A0" />
                                             <TextInput
                                                 value={password}
                                                 onChangeText={setPassword}
-                                                placeholder="Create a password"
+                                                placeholder="Password"
+                                                placeholderTextColor="#A0A0A0"
                                                 secureTextEntry={!showPassword}
-                                                className="flex-1 ml-3 text-gray-700 text-sm font-medium"
+                                                style={styles.input}
                                             />
-
                                             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                                <MaterialIcons
-                                                    name={showPassword ? "visibility" : "visibility-off"}
-                                                    size={18}
-                                                    color="#9CA3AF"
-                                                />
+                                                <Ionicons name={showPassword ? "eye-off-outline" : "eye-outline"} size={18} color="#A0A0A0" />
                                             </TouchableOpacity>
                                         </View>
-                                    </View>
 
-
-                                    {/* Confirm Password */}
-                                    <View className='mb-2'>
-                                        <Text className="text-gray-600 ml-1 text-xs font-bold uppercase">
-                                            Confirm Password
-                                        </Text>
-
-                                        <View className="flex-row items-center border border-gray-200 rounded-xl px-4 py-1 bg-gray-50">
-                                            <MaterialIcons name="verified-user" size={18} color="#6B7280" />
-
+                                        {/* Confirm Password */}
+                                        <View style={styles.inputContainer}>
+                                            <MaterialIcons name="verified-user" size={18} color="#A0A0A0" />
                                             <TextInput
                                                 value={confirmPassword}
                                                 onChangeText={setConfirmPassword}
-                                                placeholder="Repeat your password"
+                                                placeholder="Confirm Password"
+                                                placeholderTextColor="#A0A0A0"
                                                 secureTextEntry={!showConfirmPassword}
-                                                className="flex-1 ml-3 text-gray-700 text-sm font-medium"
+                                                style={styles.input}
                                             />
-
                                             <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                                <MaterialIcons
-                                                    name={showConfirmPassword ? "visibility" : "visibility-off"}
-                                                    size={18}
-                                                    color="#9CA3AF"
-                                                />
+                                                <Ionicons name={showConfirmPassword ? "eye-off-outline" : "eye-outline"} size={18} color="#A0A0A0" />
                                             </TouchableOpacity>
                                         </View>
                                     </View>
 
+                                    {/* Register Button */}
+                                    <TouchableOpacity
+                                        onPress={handleRegister}
+                                        activeOpacity={0.8}
+                                        style={styles.registerBtn}
+                                    >
+                                        <Text style={styles.registerBtnText}>Get Started</Text>
+                                    </TouchableOpacity>
+
                                 </View>
 
-                                {/* Register Button */}
-                                <TouchableOpacity
-                                    onPress={handleRegister}
-                                    activeOpacity={0.8}
-                                    className="bg-blue-600 py-3 rounded-xl shadow-lg shadow-blue-300 active:bg-blue-700 mt-6"
-                                >
-                                    <Text className="text-white text-center font-bold text-base tracking-wide">
-                                        REGISTER
-                                    </Text>
-                                </TouchableOpacity>
-
+                                {/* Footer */}
+                                <View style={styles.footer}>
+                                    <Text style={styles.footerText}>Already have an account? </Text>
+                                    <TouchableOpacity onPress={() => router.back()}>
+                                        <Text style={styles.loginText}>Login Now</Text>
+                                    </TouchableOpacity>
+                                </View>
 
                             </View>
-
-                            {/* Footer */}
-                            <View className="flex-row justify-center mb-10">
-                                <Text className="text-gray-600">Already have an account? </Text>
-                                <TouchableOpacity onPress={() => router.back()}>
-                                    <Text className="text-blue-600 font-bold">Login Now</Text>
-                                </TouchableOpacity>
-                            </View>
-
-                        </ScrollView>
-                    </View>
-
-                </View>
-            </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+                        </View>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
+        </View>
     )
 }
 
-export default Register
+const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: '#FDFDFD' },
+    keyboardView: { flex: 1 },
+    inner: { flex: 1 },
+    
+    // Background Decorations
+    bgCircleTop: {
+        position: 'absolute',
+        top: -height * 0.05,
+        right: -width * 0.15,
+        width: width * 0.7,
+        height: width * 0.7,
+        borderRadius: width,
+        backgroundColor: '#FFF1F1', 
+        opacity: 0.7,
+    },
+    bgCircleBottom: {
+        position: 'absolute',
+        bottom: -height * 0.05,
+        left: -width * 0.15,
+        width: width * 0.6,
+        height: width * 0.6,
+        borderRadius: width,
+        backgroundColor: '#FFF1F1',
+        opacity: 0.5,
+    },
+
+    // Top Branding
+    topSection: {
+        height: height * 0.22,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 30,
+        zIndex: 1,
+    },
+    logoCircle: {
+        backgroundColor: 'white',
+        padding: 12,
+        borderRadius: 50,
+        marginBottom: 10,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
+    },
+    brandTitle: {
+        fontSize: 28,
+        fontWeight: '900',
+        color: '#2D3436',
+    },
+    brandTagline: {
+        fontSize: 9,
+        color: '#A0A0A0',
+        fontWeight: 'bold',
+        letterSpacing: 1.5,
+        marginTop: 3,
+    },
+
+    // Form Card Wrapper
+    formWrapper: { 
+        flex: 1, 
+        paddingHorizontal: 30, 
+        zIndex: 1,
+        marginTop: 10
+    },
+    card: {
+        backgroundColor: 'white',
+        borderRadius: 35,
+        paddingHorizontal: 25,
+        paddingVertical: 35,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.08,
+        shadowRadius: 20,
+        elevation: 10,
+        borderWidth: 1,
+        borderColor: '#F2F2F2',
+    },
+    cardHeader: { alignItems: 'center', marginBottom: 25 },
+    welcomeText: { fontSize: 24, fontWeight: 'bold', color: '#2D3436' },
+    subText: { fontSize: 13, color: '#A0A0A0', marginTop: 5, textAlign: 'center' },
+
+    // Inputs
+    inputsArea: { gap: 12 },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F7F8FA',
+        borderRadius: 15,
+        paddingHorizontal: 15,
+        height: 52,
+        borderWidth: 1,
+        borderColor: '#ECECEC',
+    },
+    input: {
+        flex: 1,
+        marginLeft: 10,
+        fontSize: 14,
+        color: '#2D3436',
+    },
+    
+    registerBtn: {
+        backgroundColor: '#FF5A5F',
+        height: 55,
+        borderRadius: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#FF5A5F',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 3,
+        marginTop: 30,
+    },
+    registerBtnText: { color: 'white', fontSize: 17, fontWeight: 'bold' },
+
+    // Footer
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 30,
+        paddingBottom: 40,
+    },
+    footerText: { fontSize: 14, color: '#A0A0A0' },
+    loginText: { fontSize: 14, color: '#FF5A5F', fontWeight: 'bold' },
+});
+
+export default Register;

@@ -2,8 +2,23 @@ import useLoader from '@/hooks/useLoader'
 import { login } from '@/services/auth'
 import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
-import { Alert, Keyboard, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
-import { MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons'
+import { 
+  Alert, 
+  Keyboard, 
+  KeyboardAvoidingView, 
+  Platform, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  TouchableWithoutFeedback, 
+  View, 
+  StatusBar, 
+  StyleSheet, 
+  Dimensions 
+} from 'react-native'
+import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons'
+
+const { width, height } = Dimensions.get('window');
 
 const Login = () => {
     const router = useRouter()
@@ -11,7 +26,6 @@ const Login = () => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-
     const [showPassword, setShowPassword] = useState(false)
 
     const handleLogin = async () => {
@@ -19,158 +33,265 @@ const Login = () => {
             Alert.alert('Missing Details', 'Please enter both email and password.');
             return;
         }
-
         showLoader()
-
         try {
             await login(email, password);
             router.replace('/home');
         } catch (error: any) {
-            console.error("Login Error:", error);
-            let msg = error.message;
-            if (msg.includes('invalid-credential')) msg = "Invalid Email or Password.";
-            Alert.alert("Login Failed", msg);
+            Alert.alert("Login Failed", "Invalid Email or Password.");
         } finally {
             hideLoader()
         }
     }
 
-    const handleGoogleLogin = () => {
-        Alert.alert("Coming Soon", "Google Sign-In will be implemented later!");
-    }
-
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            className="flex-1"
-        >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View className="flex-1 bg-gray-50">
+        <View style={styles.container}>
+            <StatusBar barStyle="dark-content" />
 
-                    {/* HEADER */}
-                    <View className="bg-blue-600 h-[35%] rounded-b-[50px] items-center justify-center pt-8">
-                        <View className="bg-white/20 p-3 rounded-full mb-3">
-                            <FontAwesome5 name="house-user" size={40} color="white" />
-                        </View>
-                        <Text className="text-white text-3xl font-bold tracking-wider">BoardingMate</Text>
-                        <Text className="text-blue-100 text-sm mt-1">Landlord's Best Friend</Text>
-                    </View>
+            {/* BACKGROUND DECORATIONS */}
+            <View style={styles.bgCircleTop} />
+            <View style={styles.bgCircleBottom} />
 
-                    {/* MAIN CONTAINER */}
-                    <View className="flex-1 px-6 -mt-20">
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.keyboardView}
+            >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View style={styles.inner}>
 
-                        {/* WHITE CARD */}
-                        <View className="bg-white rounded-3xl shadow-xl p-8">
-
-                            <View className="items-center mb-6">
-                                <Text className="text-2xl font-bold text-gray-800">Welcome Back!</Text>
-                                <Text className="text-gray-500 text-sm mt-1">Sign in to manage your property</Text>
+                        {/* 1. TOP SECTION (LOGO & TITLES) - Height adu kala */}
+                        <View style={styles.topSection}>
+                            <View style={styles.logoCircle}>
+                                <Ionicons name="home" size={38} color="#FF5A5F" />
                             </View>
+                            <Text style={styles.brandTitle}>
+                                Boarding<Text style={{ color: '#FF5A5F' }}>Mate</Text>
+                            </Text>
+                            <Text style={styles.brandSub}>Smart Property Management</Text>
+                        </View>
 
-                            {/* Inputs Section */}
-                            <View className="space-y-5">
-                                <View className="mb-4">
-                                    <Text className="text-gray-600 ml-1 text-xs font-bold uppercase mb-2">
-                                        Email Address
-                                    </Text>
+                        {/* 2. FORM CONTAINER */}
+                        <View style={styles.formWrapper}>
+                            <View style={styles.card}>
+                                
+                                <View style={styles.cardHeader}>
+                                    <Text style={styles.welcomeText}>Welcome Back!</Text>
+                                    <Text style={styles.subText}>Log in to manage your property</Text>
+                                </View>
 
-                                    <View className="flex-row items-center border border-gray-200 rounded-xl px-4 py-1 bg-gray-50">
-                                        <MaterialIcons name="mail-outline" size={18} color="#6B7280" />
-
+                                <View style={styles.inputsArea}>
+                                    {/* Email */}
+                                    <View style={styles.inputContainer}>
+                                        <MaterialIcons name="mail-outline" size={18} color="#A0A0A0" />
                                         <TextInput
                                             value={email}
                                             onChangeText={setEmail}
-                                            placeholder="Enter your email"
+                                            placeholder="Email Address"
+                                            placeholderTextColor="#A0A0A0"
                                             keyboardType="email-address"
                                             autoCapitalize="none"
-                                            className="flex-1 ml-3 text-gray-700 text-sm font-medium"
-                                            textAlignVertical="center"
+                                            style={styles.input}
                                         />
                                     </View>
-                                </View>
 
-
-                                {/* Password Field with Eye Icon */}
-                                <View>
-                                    <Text className="text-gray-600 ml-1 text-xs font-bold uppercase mb-2">
-                                        Password
-                                    </Text>
-
-                                    <View className="flex-row items-center border border-gray-200 rounded-xl px-4 py-1 bg-gray-50">
-                                        <MaterialIcons name="lock-outline" size={18} color="#6B7280" />
-
+                                    {/* Password */}
+                                    <View style={styles.inputContainer}>
+                                        <MaterialIcons name="lock-outline" size={18} color="#A0A0A0" />
                                         <TextInput
                                             value={password}
                                             onChangeText={setPassword}
-                                            placeholder="Enter your password"
+                                            placeholder="Password"
+                                            placeholderTextColor="#A0A0A0"
                                             secureTextEntry={!showPassword}
-                                            className="flex-1 ml-3 text-gray-700 text-sm font-medium"
-                                            textAlignVertical="center"
+                                            style={styles.input}
                                         />
-
                                         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                            <MaterialIcons
-                                                name={showPassword ? "visibility" : "visibility-off"}
-                                                size={18}
-                                                color="#9CA3AF"
-                                            />
+                                            <Ionicons name={showPassword ? "eye-off-outline" : "eye-outline"} size={18} color="#A0A0A0" />
                                         </TouchableOpacity>
                                     </View>
                                 </View>
 
+                                {/* Forgot Password */}
+                                <TouchableOpacity style={styles.forgotBtn}>
+                                    <Text style={styles.forgotText}>Forgot Password?</Text>
+                                </TouchableOpacity>
+
+                                {/* Login Button */}
+                                <TouchableOpacity
+                                    onPress={handleLogin}
+                                    activeOpacity={0.8}
+                                    style={styles.loginBtn}
+                                >
+                                    <Text style={styles.loginBtnText}>Login</Text>
+                                </TouchableOpacity>
+
+                                {/* Google Login */}
+                                <TouchableOpacity
+                                    onPress={() => Alert.alert("Coming Soon")}
+                                    style={styles.googleBtn}
+                                >
+                                    <AntDesign name="google" size={16} color="#757575" />
+                                    <Text style={styles.googleBtnText}>Sign in with Google</Text>
+                                </TouchableOpacity>
+
                             </View>
 
-                            <TouchableOpacity className="items-end mt-3 mb-4">
-                                <Text className="text-blue-500 font-medium text-sm">Forgot Password?</Text>
-                            </TouchableOpacity>
-
-                            {/* Login Button */}
-                            <TouchableOpacity
-                                onPress={handleLogin}
-                                className="bg-blue-600 py-3 rounded-xl shadow-lg shadow-blue-300 active:bg-blue-700"
-                            >
-                                <Text className="text-white text-center font-bold text-base tracking-wide">
-                                    LOGIN
-                                </Text>
-                            </TouchableOpacity>
-
-
-                            {/* DIVIDER */}
-                            <View className="flex-row items-center my-4">
-                                <View className="flex-1 h-[1px] bg-gray-200" />
-                                <Text className="mx-3 text-gray-400 font-medium text-xs">OR</Text>
-                                <View className="flex-1 h-[1px] bg-gray-200" />
+                            {/* Footer */}
+                            <View style={styles.footer}>
+                                <Text style={styles.footerText}>Don't have an account? </Text>
+                                <TouchableOpacity onPress={() => router.push('/register')}>
+                                    <Text style={styles.signUpText}>Sign Up</Text>
+                                </TouchableOpacity>
                             </View>
 
-
-                            {/* Google Button */}
-                            <TouchableOpacity
-                                onPress={handleGoogleLogin}
-                                className="flex-row items-center justify-center bg-gray-50 border border-gray-200 py-3 rounded-xl active:bg-gray-100 mb-2"
-                            >
-                                <AntDesign name="google" size={18} color="#DB4437" />
-                                <Text className="text-gray-700 font-bold text-sm ml-2">
-                                    Sign in with Google
-                                </Text>
-                            </TouchableOpacity>
-
-
                         </View>
-
-                        {/* Register Link */}
-                        <View className="flex-row justify-center mt-6">
-                            <Text className="text-gray-600">Don't have an account? </Text>
-                            <TouchableOpacity onPress={() => router.push('/register')}>
-                                <Text className="text-blue-600 font-bold">Register Now</Text>
-                            </TouchableOpacity>
-                        </View>
-
                     </View>
-
-                </View>
-            </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
+        </View>
     )
 }
 
-export default Login
+const styles = StyleSheet.create({
+    container: { 
+        flex: 1, 
+        backgroundColor: '#FDFDFD',
+        overflow: 'hidden' 
+    },
+    keyboardView: { flex: 1 },
+    inner: { flex: 1 },
+    
+    // Background Decorations
+    bgCircleTop: {
+        position: 'absolute',
+        top: -height * 0.05,
+        right: -width * 0.15,
+        width: width * 0.7,
+        height: width * 0.7,
+        borderRadius: width,
+        backgroundColor: '#FFF1F1', 
+        opacity: 0.7,
+    },
+    bgCircleBottom: {
+        position: 'absolute',
+        bottom: -height * 0.05,
+        left: -width * 0.15,
+        width: width * 0.6,
+        height: width * 0.6,
+        borderRadius: width,
+        backgroundColor: '#FFF1F1',
+        opacity: 0.5,
+    },
+
+    // Top Branding
+    topSection: {
+        height: '28%', // 32% idan adu kala
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 30,
+        zIndex: 1,
+    },
+    logoCircle: {
+        backgroundColor: 'white',
+        padding: 15,
+        borderRadius: 50,
+        marginBottom: 10,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
+    },
+    brandTitle: {
+        fontSize: 28,
+        fontWeight: '900',
+        color: '#2D3436',
+    },
+    brandSub: {
+        fontSize: 9,
+        color: '#A0A0A0',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        letterSpacing: 1.5,
+        marginTop: 2,
+    },
+
+    // Form Card
+    formWrapper: { flex: 1, paddingHorizontal: 30, zIndex: 1 },
+    card: {
+        backgroundColor: 'white',
+        borderRadius: 35,
+        paddingHorizontal: 25,
+        paddingVertical: 25, 
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 }, 
+        shadowOpacity: 0.05, 
+        shadowRadius: 20,
+        elevation: 10, 
+        borderWidth: 1,
+        borderColor: '#F8F8F8',
+    },
+    cardHeader: { alignItems: 'center', marginBottom: 20 },
+    welcomeText: { fontSize: 20, fontWeight: 'bold', color: '#2D3436' },
+    subText: { fontSize: 12, color: '#A0A0A0', marginTop: 2 },
+
+    // Inputs
+    inputsArea: { gap: 10 },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F7F8FA',
+        borderRadius: 15,
+        paddingHorizontal: 15,
+        height: 50, // 55 idan adu kala
+        borderWidth: 1,
+        borderColor: '#ECECEC',
+    },
+    input: {
+        flex: 1,
+        marginLeft: 10,
+        fontSize: 14,
+        color: '#2D3436',
+    },
+
+    forgotBtn: { alignSelf: 'center', marginTop: 12, marginBottom: 15 },
+    forgotText: { color: '#A0A0A0', fontWeight: 'bold', fontSize: 12 },
+    
+    loginBtn: {
+        backgroundColor: '#FF5A5F',
+        height: 52, // 60 idan adu kala
+        borderRadius: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#FF5A5F',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 3,
+    },
+    loginBtnText: { color: 'white', fontSize: 16, fontWeight: 'bold' },
+
+    googleBtn: {
+        flexDirection: 'row',
+        height: 48, // 55 idan adu kala
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: '#E0E0E0',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 12,
+        backgroundColor: 'white',
+    },
+    googleBtnText: { color: '#666', fontSize: 14, fontWeight: 'bold', marginLeft: 8 },
+
+    // Footer
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 25, // Form eka lagata gaththa
+        paddingBottom: 20,
+    },
+    footerText: { fontSize: 14, color: '#A0A0A0' },
+    signUpText: { fontSize: 14, color: '#FF5A5F', fontWeight: 'bold' },
+});
+
+export default Login;

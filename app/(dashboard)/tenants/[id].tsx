@@ -1,9 +1,11 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, StatusBar, Linking } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, StatusBar, Linking, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { MaterialIcons, FontAwesome6, Ionicons, Feather } from '@expo/vector-icons'
 import { getTenantById, markAsPaid, deleteTenant } from '@/services/tenant'
 import useLoader from '@/hooks/useLoader'
+
+const { width, height } = Dimensions.get('window');
 
 const TenantDetails = () => {
   const { id } = useLocalSearchParams();
@@ -54,64 +56,68 @@ const TenantDetails = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" />
 
-      {/* --- NEW BUTTONS START --- */}
-      {/* 1. BACK BUTTON */}
-      <TouchableOpacity 
-        onPress={() => router.back()} 
-        style={styles.topBtnLeft}
-      >
-        <Ionicons name="arrow-back" size={24} color="white" />
-      </TouchableOpacity>
+      {/* BACKGROUND DECORATIONS (Consistent with Brand) */}
+      <View style={styles.bgCircleTop} />
+      <View style={styles.bgCircleBottom} />
 
-      {/* 2. EDIT BUTTON */}
-      <TouchableOpacity 
-        onPress={() => router.push({ pathname: '/(dashboard)/tenants/edit', params: { id: id } })}
-        style={styles.topBtnRight}
-      >
-        <Feather name="edit-2" size={20} color="white" />
-      </TouchableOpacity>
-      {/* --- NEW BUTTONS END --- */}
-      
-      {/* 1. PROFILE HEADER */}
-      <View style={styles.header}>
-        <View style={styles.avatarBox}>
-          <Text style={styles.avatarText}>{tenant.name.charAt(0)}</Text>
-        </View>
-        <Text style={styles.nameText}>{tenant.name}</Text>
-        <View style={styles.roomBadge}>
-           <Text style={styles.roomText}>{tenant.roomNo}</Text>
-        </View>
-
-        {/* Contact Actions */}
-        <View style={styles.actionRow}>
-           <TouchableOpacity style={styles.circleBtn} onPress={() => Linking.openURL(`tel:${tenant.phone}`)}>
-              <MaterialIcons name="call" size={22} color="white" />
-           </TouchableOpacity>
-           <TouchableOpacity style={styles.circleBtn} onPress={() => Linking.openURL(`sms:${tenant.phone}`)}>
-              <MaterialIcons name="message" size={22} color="white" />
-           </TouchableOpacity>
-        </View>
+      {/* 1. TOP NAVIGATION BAR */}
+      <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.navBtn}>
+           <Ionicons name="arrow-back" size={22} color="#2D3436" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Tenant <Text style={{color: '#FF5A5F'}}>Profile</Text></Text>
+        <TouchableOpacity 
+          onPress={() => router.push({ pathname: '/(dashboard)/tenants/edit', params: { id: id } })}
+          style={styles.navBtn}
+        >
+           <Feather name="edit-3" size={20} color="#FF5A5F" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
-        {/* 2. PAYMENT SUMMARY CARD */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Monthly Breakdown</Text>
+        {/* 2. PROFILE SECTION */}
+        <View style={styles.profileHeader}>
+          <View style={styles.avatarContainer}>
+            <View style={styles.avatarCircle}>
+              <Text style={styles.avatarText}>{tenant.name.charAt(0).toUpperCase()}</Text>
+            </View>
+            <View style={styles.roomBadge}>
+              <Text style={styles.roomBadgeText}>{tenant.roomNo}</Text>
+            </View>
+          </View>
+          <Text style={styles.tenantName}>{tenant.name}</Text>
           
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Base Rent</Text>
-            <Text style={styles.detailValue}>Rs. {tenant.rentAmount}</Text>
+          {/* Contact Actions */}
+          <View style={styles.contactRow}>
+            <TouchableOpacity style={styles.contactBtn} onPress={() => Linking.openURL(`tel:${tenant.phone}`)}>
+              <MaterialIcons name="call" size={20} color="#FF5A5F" />
+              <Text style={styles.contactBtnText}>Call</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.contactBtn} onPress={() => Linking.openURL(`sms:${tenant.phone}`)}>
+              <MaterialIcons name="chat-bubble-outline" size={20} color="#FF5A5F" />
+              <Text style={styles.contactBtnText}>Message</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Electricity Share</Text>
-            <Text style={styles.detailValue}>Rs. {tenant.electricityShare}</Text>
+        </View>
+
+        {/* 3. PAYMENT BREAKDOWN CARD */}
+        <View style={styles.card}>
+          <Text style={styles.cardHeaderTitle}>MONTHLY BREAKDOWN</Text>
+          
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Base Rent</Text>
+            <Text style={styles.rowValue}>Rs. {tenant.rentAmount}</Text>
           </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Water Share</Text>
-            <Text style={styles.detailValue}>Rs. {tenant.waterShare}</Text>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Electricity Share</Text>
+            <Text style={styles.rowValue}>Rs. {tenant.electricityShare || 0}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Water Share</Text>
+            <Text style={styles.rowValue}>Rs. {tenant.waterShare || 0}</Text>
           </View>
 
           <View style={styles.divider} />
@@ -122,28 +128,28 @@ const TenantDetails = () => {
           </View>
         </View>
 
-        {/* 3. KEY MONEY STATUS */}
+        {/* 4. KEY MONEY CARD */}
         <View style={[styles.card, styles.keyMoneyCard]}>
-           <View style={styles.keyIconBox}>
-              <Ionicons name="key" size={24} color={tenant.isKeyMoneyPaid ? "#16a34a" : "#dc2626"} />
+           <View style={[styles.keyIconBg, {backgroundColor: tenant.isKeyMoneyPaid ? '#E7F9F0' : '#FFF1F1'}]}>
+              <Ionicons name="key" size={20} color={tenant.isKeyMoneyPaid ? "#10B981" : "#FF5A5F"} />
            </View>
            <View style={{flex: 1, marginLeft: 15}}>
-              <Text style={styles.cardTitle}>Key Money</Text>
-              <Text style={styles.keyStatusText}>
+              <Text style={styles.keyLabel}>Key Money Status</Text>
+              <Text style={[styles.keyStatus, {color: tenant.isKeyMoneyPaid ? '#10B981' : '#FF5A5F'}]}>
                 {tenant.isKeyMoneyPaid ? "Fully Settled" : "Payment Pending"}
               </Text>
            </View>
-           <Text style={styles.keyValue}>Rs. {tenant.keyMoneyAmount}</Text>
+           <Text style={styles.keyAmount}>Rs. {tenant.keyMoneyAmount}</Text>
         </View>
 
-        {/* 4. ACTIONS */}
-        <TouchableOpacity style={styles.payBtn} onPress={handlePayment}>
-           <MaterialIcons name="verified" size={24} color="white" />
-           <Text style={styles.payBtnText}>MARK AS PAID</Text>
+        {/* 5. MAIN ACTION BUTTONS */}
+        <TouchableOpacity style={styles.mainPayBtn} onPress={handlePayment} activeOpacity={0.8}>
+           <MaterialIcons name="verified-user" size={20} color="white" />
+           <Text style={styles.mainPayBtnText}>MARK AS PAID</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
-           <Text style={styles.deleteBtnText}>Remove Tenant</Text>
+           <Text style={styles.deleteBtnText}>Remove Tenant from Boarding</Text>
         </TouchableOpacity>
 
       </ScrollView>
@@ -152,70 +158,70 @@ const TenantDetails = () => {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8fafc' },
+  container: { flex: 1, backgroundColor: '#FDFDFD' },
   
-  // Top Buttons Style
-  topBtnLeft: {
-    position: 'absolute',
-    top: 50,
-    left: 20,
-    width: 45,
-    height: 45,
-    borderRadius: 15,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
+  // Background Blobs
+  bgCircleTop: {
+    position: 'absolute', top: -height * 0.05, right: -width * 0.15,
+    width: width * 0.7, height: width * 0.7, borderRadius: width,
+    backgroundColor: '#FFF1F1', opacity: 0.7,
   },
-  topBtnRight: {
-    position: 'absolute',
-    top: 50,
-    right: 20,
-    width: 45,
-    height: 45,
-    borderRadius: 15,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
+  bgCircleBottom: {
+    position: 'absolute', bottom: -height * 0.05, left: -width * 0.15,
+    width: width * 0.6, height: width * 0.6, borderRadius: width,
+    backgroundColor: '#FFF1F1', opacity: 0.5,
   },
 
-  header: { 
-    backgroundColor: '#2563eb', 
-    paddingTop: 80, 
-    paddingBottom: 40, 
-    alignItems: 'center', 
-    borderBottomLeftRadius: 50, 
-    borderBottomRightRadius: 50 
-  },
-  avatarBox: { width: 80, height: 80, borderRadius: 30, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center', marginBottom: 15 },
-  avatarText: { fontSize: 35, fontWeight: 'bold', color: 'white' },
-  nameText: { fontSize: 24, fontWeight: '900', color: 'white' },
-  roomBadge: { backgroundColor: 'white', paddingHorizontal: 15, paddingVertical: 5, borderRadius: 12, marginTop: 8 },
-  roomText: { color: '#2563eb', fontWeight: 'bold', fontSize: 12 },
-  actionRow: { flexDirection: 'row', marginTop: 20 },
-  circleBtn: { width: 45, height: 45, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 },
+  // Top Bar
+  topBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 25, paddingTop: 50, marginBottom: 20 },
+  navBtn: { width: 42, height: 42, borderRadius: 12, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', elevation: 3, shadowColor: '#000', shadowOpacity: 0.05 },
+  headerTitle: { fontSize: 20, fontWeight: '900', color: '#2D3436' },
 
-  scrollContent: { padding: 25 },
-  card: { backgroundColor: 'white', borderRadius: 30, padding: 25, marginBottom: 20, elevation: 4, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10 },
-  cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#1e293b', marginBottom: 15 },
-  detailRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  detailLabel: { color: '#64748b', fontWeight: '600' },
-  detailValue: { color: '#1e293b', fontWeight: 'bold' },
-  divider: { height: 1, backgroundColor: '#f1f5f9', marginVertical: 15 },
+  scrollContent: { paddingHorizontal: 25, paddingBottom: 50 },
+
+  // Profile Header
+  profileHeader: { alignItems: 'center', marginBottom: 30 },
+  avatarContainer: { marginBottom: 15, position: 'relative' },
+  avatarCircle: { width: 90, height: 90, borderRadius: 30, backgroundColor: '#FFF1F1', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#F2F2F2' },
+  avatarText: { fontSize: 36, fontWeight: 'bold', color: '#FF5A5F' },
+  roomBadge: { position: 'absolute', bottom: -5, right: -5, backgroundColor: '#FF5A5F', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 10, borderWidth: 3, borderColor: 'white' },
+  roomBadgeText: { color: 'white', fontSize: 10, fontWeight: 'bold' },
+  tenantName: { fontSize: 24, fontWeight: '900', color: '#2D3436' },
+  
+  contactRow: { flexDirection: 'row', marginTop: 15 },
+  contactBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', paddingHorizontal: 18, paddingVertical: 10, borderRadius: 15, marginHorizontal: 8, elevation: 3, shadowColor: '#000', shadowOpacity: 0.05 },
+  contactBtnText: { marginLeft: 8, fontSize: 13, fontWeight: 'bold', color: '#2D3436' },
+
+  // Card Styles
+  card: {
+    backgroundColor: 'white', borderRadius: 35, padding: 25, marginBottom: 20,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.08, shadowRadius: 15,
+    elevation: 8, borderWidth: 1, borderColor: '#F2F2F2'
+  },
+  cardHeaderTitle: { fontSize: 10, fontWeight: '900', color: '#A0A0A0', letterSpacing: 1.5, marginBottom: 20, textTransform: 'uppercase' },
+  row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
+  rowLabel: { fontSize: 14, color: '#636E72', fontWeight: '500' },
+  rowValue: { fontSize: 14, color: '#2D3436', fontWeight: 'bold' },
+  divider: { height: 1, backgroundColor: '#F7F8FA', marginVertical: 15 },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  totalLabel: { fontSize: 18, fontWeight: '900', color: '#1e293b' },
-  totalValue: { fontSize: 22, fontWeight: '900', color: '#2563eb' },
+  totalLabel: { fontSize: 16, fontWeight: '900', color: '#2D3436' },
+  totalValue: { fontSize: 20, fontWeight: '900', color: '#FF5A5F' },
 
-  keyMoneyCard: { flexDirection: 'row', alignItems: 'center' },
-  keyIconBox: { width: 50, height: 50, borderRadius: 15, backgroundColor: '#f8fafc', alignItems: 'center', justifyContent: 'center' },
-  keyStatusText: { color: '#64748b', fontSize: 12, fontWeight: '600' },
-  keyValue: { fontSize: 16, fontWeight: 'bold', color: '#1e293b' },
+  keyMoneyCard: { flexDirection: 'row', alignItems: 'center', paddingVertical: 20 },
+  keyIconBg: { width: 45, height: 45, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  keyLabel: { fontSize: 13, fontWeight: 'bold', color: '#2D3436' },
+  keyStatus: { fontSize: 11, fontWeight: '600', marginTop: 2 },
+  keyAmount: { fontSize: 15, fontWeight: '900', color: '#2D3436' },
 
-  payBtn: { backgroundColor: '#2563eb', height: 65, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', elevation: 8 },
-  payBtnText: { color: 'white', fontSize: 16, fontWeight: '900', marginLeft: 10 },
-  deleteBtn: { marginTop: 20, alignItems: 'center', padding: 10 },
-  deleteBtnText: { color: '#ef4444', fontWeight: 'bold' }
+  // Action Buttons
+  mainPayBtn: {
+    backgroundColor: '#FF5A5F', height: 60, borderRadius: 18, flexDirection: 'row',
+    alignItems: 'center', justifyContent: 'center', marginTop: 10,
+    shadowColor: '#FF5A5F', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 5
+  },
+  mainPayBtnText: { color: 'white', fontSize: 16, fontWeight: '900', marginLeft: 10, letterSpacing: 1 },
+  deleteBtn: { marginTop: 20, padding: 15, alignItems: 'center' },
+  deleteBtnText: { color: '#A0A0A0', fontSize: 13, fontWeight: 'bold', textDecorationLine: 'underline' }
 });
 
-export default TenantDetails
+export default TenantDetails;

@@ -13,7 +13,7 @@ const DashboardLayout = () => {
     <Tabs 
       screenOptions={{ 
         headerShown: false,
-        tabBarActiveTintColor: '#2563eb', 
+        tabBarActiveTintColor: '#FF5A5F', 
         tabBarInactiveTintColor: '#94a3b8',
         tabBarStyle: {
             paddingBottom: 5,
