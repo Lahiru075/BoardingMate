@@ -1,20 +1,20 @@
 import useLoader from '@/hooks/useLoader'
 import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
-import { 
-  Alert, 
-  Keyboard, 
-  KeyboardAvoidingView, 
-  Platform, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  TouchableWithoutFeedback, 
-  View, 
-  StatusBar, 
-  StyleSheet, 
-  Dimensions,
-  ScrollView 
+import {
+    Alert,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
+    StatusBar,
+    StyleSheet,
+    Dimensions,
+    ScrollView
 } from 'react-native'
 import { MaterialIcons, Ionicons } from '@expo/vector-icons'
 import { registation } from '@/services/auth'
@@ -35,6 +35,10 @@ const Register = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
     const handleRegister = async () => {
+
+        const nameRegex = /^[a-zA-Z\s]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
         if (!fullName || !email || !password || !confirmPassword) {
             Toast.show({
                 type: 'error',
@@ -43,19 +47,32 @@ const Register = () => {
             })
             return;
         }
-        if (password !== confirmPassword) {
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'Passwords do not match!'
-            })
+
+        if (!nameRegex.test(fullName)) {
+            Toast.show({ type: 'error', text1: 'Invalid Name', text2: 'Name should only contain letters! 🔠' });
             return;
         }
+
+        if (!emailRegex.test(email)) {
+            Toast.show({ type: 'error', text1: 'Invalid Email', text2: 'Please enter a valid email address! 📧' });
+            return;
+        }
+
+        if (password.length < 6) {
+            Toast.show({ type: 'error', text1: 'Weak Password', text2: 'Password must be at least 6 characters! 🔒' });
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            Toast.show({ type: 'error', text1: 'Password Mismatch', text2: 'Passwords do not match! 🔑' });
+            return;
+        }
+
 
         showLoader()
         try {
             await registation(fullName, email, password);
-            
+
             Toast.show({
                 type: 'success',
                 text1: 'Success',
@@ -104,12 +121,12 @@ const Register = () => {
                             {/* 2. FORM CONTAINER */}
                             <View style={styles.formWrapper}>
                                 <View style={styles.card}>
-                                    
+
                                     <View style={styles.cardHeader}>
                                         <Text style={styles.welcomeText}>Create Account</Text>
                                         <Text style={styles.subText}>Fill the details to join BoardingMate</Text>
                                     </View>
-                                    
+
                                     <View style={styles.inputsArea}>
                                         {/* Full Name */}
                                         <View style={styles.inputContainer}>
@@ -202,7 +219,7 @@ const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#FDFDFD' },
     keyboardView: { flex: 1 },
     inner: { flex: 1 },
-    
+
     // Background Decorations
     bgCircleTop: {
         position: 'absolute',
@@ -211,7 +228,7 @@ const styles = StyleSheet.create({
         width: width * 0.7,
         height: width * 0.7,
         borderRadius: width,
-        backgroundColor: '#FFF1F1', 
+        backgroundColor: '#FFF1F1',
         opacity: 0.7,
     },
     bgCircleBottom: {
@@ -257,9 +274,9 @@ const styles = StyleSheet.create({
     },
 
     // Form Card Wrapper
-    formWrapper: { 
-        flex: 1, 
-        paddingHorizontal: 30, 
+    formWrapper: {
+        flex: 1,
+        paddingHorizontal: 30,
         zIndex: 1,
         marginTop: 10
     },
@@ -298,7 +315,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#2D3436',
     },
-    
+
     registerBtn: {
         backgroundColor: '#FF5A5F',
         height: 55,

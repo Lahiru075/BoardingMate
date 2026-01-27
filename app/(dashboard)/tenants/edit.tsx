@@ -51,12 +51,27 @@ const EditTenant = () => {
     }, [id]);
 
     const handleUpdate = async () => {
+
+        const phoneRegex = /^[0-9]{10}$/;
+        const nameRegex = /^[a-zA-Z\s]+$/;
+
         if (!name || !phone || !rent) {
-            Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'Please fill in all required fields.',
-            })
+            Toast.show({ type: 'error', text1: 'Error', text2: 'Please fill in all required fields.' })
+            return;
+        }
+
+        if (!nameRegex.test(name)) {
+            Toast.show({ type: 'error', text1: 'Invalid Name', text2: 'Name can only contain letters!' });
+            return;
+        }
+
+        if (!phoneRegex.test(phone)) {
+            Toast.show({ type: 'error', text1: 'Invalid Phone', text2: 'Please enter a valid 10-digit number! 📱' });
+            return;
+        }
+
+        if (isNaN(Number(rent)) || Number(rent) <= 0) {
+            Toast.show({ type: 'error', text1: 'Invalid Amount', text2: 'Rent must be a positive number! 💰' });
             return;
         }
 
@@ -101,7 +116,7 @@ const EditTenant = () => {
                 <TouchableOpacity onPress={() => router.back()} style={styles.navBtn}>
                     <Ionicons name="arrow-back" size={22} color="#2D3436" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitleText}>Edit <Text style={{color: '#FF5A5F'}}>Tenant</Text></Text>
+                <Text style={styles.headerTitleText}>Edit <Text style={{ color: '#FF5A5F' }}>Tenant</Text></Text>
                 <View style={styles.headerIconBox}>
                     <Feather name="edit-3" size={18} color="#FF5A5F" />
                 </View>
@@ -112,7 +127,7 @@ const EditTenant = () => {
 
                     <View style={styles.formWrapper}>
                         <View style={styles.card}>
-                            
+
                             {/* Card Inner Header */}
                             <View style={styles.cardHeader}>
                                 <Text style={styles.welcomeText}>Update Info</Text>
@@ -156,9 +171,9 @@ const EditTenant = () => {
                                     <Text style={styles.label}>SELECT ROOM</Text>
                                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.roomList}>
                                         {rooms.map((r) => (
-                                            <TouchableOpacity 
-                                                key={r} 
-                                                onPress={() => setRoomNo(r)} 
+                                            <TouchableOpacity
+                                                key={r}
+                                                onPress={() => setRoomNo(r)}
                                                 style={[styles.roomItem, roomNo === r && styles.roomItemActive]}
                                             >
                                                 <Text style={[styles.roomText, roomNo === r && styles.roomTextActive]}>{r}</Text>
@@ -214,7 +229,7 @@ const EditTenant = () => {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#FDFDFD' },
-    
+
     // Background Blobs
     bgCircleTop: {
         position: 'absolute', top: -height * 0.05, right: -width * 0.15,
@@ -228,19 +243,19 @@ const styles = StyleSheet.create({
     },
 
     // Fixed Navigation Header
-    topBar: { 
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        paddingHorizontal: 25, 
-        paddingTop: 50, 
+    topBar: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 25,
+        paddingTop: 50,
         paddingBottom: 15,
-        zIndex: 10 
+        zIndex: 10
     },
-    navBtn: { 
-        width: 42, height: 42, borderRadius: 12, backgroundColor: 'white', 
-        alignItems: 'center', justifyContent: 'center', elevation: 3, 
-        shadowColor: '#000', shadowOpacity: 0.05 
+    navBtn: {
+        width: 42, height: 42, borderRadius: 12, backgroundColor: 'white',
+        alignItems: 'center', justifyContent: 'center', elevation: 3,
+        shadowColor: '#000', shadowOpacity: 0.05
     },
     headerTitleText: { fontSize: 20, fontWeight: '900', color: '#2D3436' },
     headerIconBox: { width: 42, height: 42, borderRadius: 12, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', elevation: 3, shadowColor: '#000', shadowOpacity: 0.05 },

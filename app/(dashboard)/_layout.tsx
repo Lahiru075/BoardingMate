@@ -16,8 +16,12 @@ const DashboardLayout = () => {
         tabBarActiveTintColor: '#FF5A5F', 
         tabBarInactiveTintColor: '#94a3b8',
         tabBarStyle: {
+            backgroundColor: '#FFFFFF', 
             paddingBottom: 5,
             height: 60,
+            borderTopWidth: 2,      // top line
+            elevation: 0,           
+            shadowOpacity: 0,      
         }
       }}
     >

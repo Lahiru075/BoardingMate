@@ -102,8 +102,15 @@ export const updateTenant = async (tenantId: string, updatedData: any) => {
 }
 
 export const distributeBills = async (roomNo: string, totalElec: number, totalWater: number) => {
+
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+
     // get all tenants in this room
-    const q = query(collection(db, "tenants"), where("roomNo", "==", roomNo));
+    const q = query(collection(db, "tenants"), where("roomNo", "==", roomNo), where("userId", "==", user.uid));
     const querySnapshot = await getDocs(q);
     
     const count = querySnapshot.size;

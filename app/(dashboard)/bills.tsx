@@ -16,16 +16,26 @@ const BillManager = () => {
   const rooms = ['Room 01', 'Room 02', 'Room 03', 'Room 04', 'Room 05'];
 
   const handleDistribute = async () => {
+
+    const numberRegex = /^\d+(\.\d+)?$/;
+
     if (!totalElec || !totalWater) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Please fill in all required fields!',
-      })
+      Toast.show({ type: 'error', text1: 'Error', text2: 'Please fill in all required fields!'})
+      return;
+    }
+
+    if (!numberRegex.test(totalElec) || !numberRegex.test(totalWater)) {
+      Toast.show({ type: 'error', text1: 'Invalid Input', text2: 'Please enter valid numeric values only! 🔢'});
+      return;
+    }
+
+    if (Number(totalElec) < 0 || Number(totalWater) < 0) {
+      Toast.show({ type: 'error', text1: 'Logical Error', text2: 'Bill amounts cannot be negative values! ❌'});
       return;
     }
 
     showLoader();
+
     try {
       await distributeBills(selectedRoom, Number(totalElec), Number(totalWater));
 
@@ -38,6 +48,7 @@ const BillManager = () => {
       setTotalElec('');
       setTotalWater('');
     } catch (error: any) {
+      console.log(error.message)
       Toast.show({
         type: 'error',
         text1: 'Error',

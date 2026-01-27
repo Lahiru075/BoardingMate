@@ -23,16 +23,38 @@ const AddTenant = () => {
   const rooms = ['Room 01', 'Room 02', 'Room 03', 'Room 04', 'Room 05'];
 
   const handleSave = async () => {
+
+    const phoneRegex = /^[0-9]{10}$/;
+    const nameRegex = /^[a-zA-Z\s]+$/;
+
     if (!name || !phone || !rent) {
 
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Please fill in all required fields!'
-      })
+      Toast.show({ type: 'error', text1: 'Error', text2: 'Please fill in all required fields!'})
+      return;
 
+    }
+
+    if (!nameRegex.test(name)) {
+      Toast.show({ type: 'error', text1: 'Invalid Name', text2: 'Name can only contain letters!' });
       return;
     }
+
+    if (!phoneRegex.test(phone)) {
+      Toast.show({ type: 'error', text1: 'Invalid Phone', text2: 'Please enter a valid 10-digit number! 📱' });
+      return;
+    }
+
+    if (isNaN(Number(rent)) || Number(rent) <= 0) {
+      Toast.show({ type: 'error', text1: 'Invalid Amount', text2: 'Rent must be a positive number! 💰' });
+      return;
+    }
+
+    if (isNaN(Number(keyMoney)) || Number(keyMoney) <= 0) {
+      Toast.show({ type: 'error', text1: 'Invalid Amount', text2: 'Key Money must be a positive number! 💰' });
+      return;
+    }
+
+
     showLoader();
     try {
       const tenantData = {

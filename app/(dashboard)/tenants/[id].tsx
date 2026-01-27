@@ -21,7 +21,11 @@ const TenantDetails = () => {
       const data = await getTenantById(id as string);
       setTenant(data);
     } catch (error) {
-      Alert.alert("Error", "Could not load tenant details.");
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Could not load tenant details.'
+      })
     } finally {
       hideLoader();
     }
@@ -43,8 +47,7 @@ const TenantDetails = () => {
             Toast.show({
               type: 'success',
               text1: 'Payment Updated',
-              text2: 'Tenant marked as paid successfully! ✅',
-              position: 'bottom'
+              text2: 'Tenant marked as paid successfully! ✅'
             });
 
           } catch (error) {
