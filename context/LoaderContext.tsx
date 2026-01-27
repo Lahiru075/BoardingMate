@@ -33,18 +33,19 @@ export const LoaderProvider = ({ children }: { children: ReactNode }) => {
             top: 0,
             left: 0,
             right: 0,
-            height: screenHeight, 
-            zIndex: 999,          
-            elevation: 10,        
-            marginTop: -100,      
+            bottom: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.7)', 
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 9999,
+            elevation: 10,
           }}
-          className="justify-center items-center bg-black/30"
         >
-          <View className="bg-gray-50 p-8 rounded-3xl shadow-xl" style={{ marginTop: 130 }} >
-            <ActivityIndicator size="large" color="#1e40af" />
-          </View>
+          <ActivityIndicator size="large" color="#FF5A5F" />
         </View>
       )}
+
+
     </LoaderContext.Provider>
   )
 }

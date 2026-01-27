@@ -15,11 +15,14 @@ const TenantDetails = () => {
 
   const loadTenant = async () => {
     if (!id) return;
+    showLoader();
     try {
       const data = await getTenantById(id as string);
       setTenant(data);
     } catch (error) {
       Alert.alert("Error", "Could not load tenant details.");
+    } finally {
+      hideLoader();
     }
   };
 

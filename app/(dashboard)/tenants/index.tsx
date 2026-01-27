@@ -76,7 +76,7 @@ const TenantList = () => {
           <Text style={styles.rentText}>Rs. {Number(item.rentAmount).toLocaleString()}</Text>
           
           <View style={styles.statusContainer}>
-             {/* ලස්සනට පෙනෙන තිත සහ Paid/Unpaid අකුරු */}
+
              <View style={[styles.statusDot, { backgroundColor: isPaid ? '#10B981' : '#FF5A5F' }]} />
              <Text style={[styles.statusLabel, { color: isPaid ? '#10B981' : '#FF5A5F' }]}>
                 {isPaid ? 'Paid' : 'Unpaid'}

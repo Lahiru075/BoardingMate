@@ -1,8 +1,10 @@
-import { View, Text, ActivityIndicator } from 'react-native'
+import { View, ActivityIndicator, Dimensions, StyleSheet } from 'react-native';
 import ".././global.css"
 import React from 'react'
 import useAuth from '@/hooks/useAuth'
 import { Redirect } from 'expo-router'
+
+const { height: screenHeight } = Dimensions.get('window');
 
 const index = () => {
 
@@ -10,10 +12,12 @@ const index = () => {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-50">
-        <ActivityIndicator size="large" color="#4ade80" />
+      <View style={styles.fullScreenLoader}>
+        <View style={styles.indicatorWrapper}>
+          <ActivityIndicator size="large" color="#FF5A5F" />
+        </View>
       </View>
-    )
+    );
   }
 
   if (user) {
@@ -23,5 +27,22 @@ const index = () => {
   }
 
 }
+
+const styles = StyleSheet.create({
+  fullScreenLoader: {
+    position: 'absolute',
+    top: -23,
+    left: 0,
+    right: 0,
+    height: screenHeight,
+    backgroundColor: '#F9FAFB',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  indicatorWrapper: {
+    marginTop: 60,
+  }
+});
 
 export default index
