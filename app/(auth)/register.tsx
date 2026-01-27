@@ -18,6 +18,7 @@ import {
 } from 'react-native'
 import { MaterialIcons, Ionicons } from '@expo/vector-icons'
 import { registation } from '@/services/auth'
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,21 +36,39 @@ const Register = () => {
 
     const handleRegister = async () => {
         if (!fullName || !email || !password || !confirmPassword) {
-            Alert.alert('Missing Details', 'Please fill in all fields.');
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Please fill in all required fields!'
+            })
             return;
         }
         if (password !== confirmPassword) {
-            Alert.alert('Error', 'Passwords do not match!');
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Passwords do not match!'
+            })
             return;
         }
 
         showLoader()
         try {
             await registation(fullName, email, password);
-            Alert.alert("Success", "Registration Successful!");
+            
+            Toast.show({
+                type: 'success',
+                text1: 'Success',
+                text2: 'Registration successful! ✅'
+            })
+
             router.replace('/login');
         } catch (error: any) {
-            Alert.alert("Registration Failed", error.message);
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Registration failed!'
+            })
         } finally {
             hideLoader()
         }

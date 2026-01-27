@@ -4,6 +4,7 @@ import { MaterialIcons, Ionicons, FontAwesome6 } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { auth } from '@/services/firebase'
 import { logout } from '@/services/auth'
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,17 +15,28 @@ const Settings = () => {
   const handleLogout = async () => {
     Alert.alert("Logout", "Are you sure you want to exit?", [
       { text: "Cancel", style: "cancel" },
-      { 
-        text: "Logout", 
-        style: "destructive", 
+      {
+        text: "Logout",
+        style: "destructive",
         onPress: async () => {
           try {
             await logout();
+
+            Toast.show({
+              type: 'success',
+              text1: 'Logged Out',
+              text2: 'See you again soon! 👋',
+            });
+
             router.replace('/login');
           } catch (error) {
-            Alert.alert("Error", "Logout failed.");
+            Toast.show({
+              type: 'error',
+              text1: 'Logout Failed',
+              text2: 'Could not complete the request. ❌',
+            });
           }
-        } 
+        }
       }
     ]);
   };
@@ -39,22 +51,22 @@ const Settings = () => {
 
       {/* 1. HEADER (Fixed) */}
       <View style={styles.header}>
-        <Text style={styles.headerTitleText}>My <Text style={{color: '#FF5A5F'}}>Profile</Text></Text>
+        <Text style={styles.headerTitleText}>My <Text style={{ color: '#FF5A5F' }}>Profile</Text></Text>
         <View style={styles.iconBox}>
           <Ionicons name="person" size={20} color="#FF5A5F" />
         </View>
       </View>
 
       {/* 2. SCROLLABLE CONTENT */}
-      <ScrollView 
-        showsVerticalScrollIndicator={false} 
+      <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        
+
         {/* PROFILE INFO CARD */}
         <View style={styles.profileCard}>
           <View style={styles.avatarCircle}>
-             <FontAwesome6 name="user-tie" size={40} color="#FF5A5F" />
+            <FontAwesome6 name="user-tie" size={40} color="#FF5A5F" />
           </View>
           <Text style={styles.userName}>{user?.displayName || 'Landlord Name'}</Text>
           <Text style={styles.userEmail}>{user?.email}</Text>
@@ -96,7 +108,7 @@ const SettingItem = ({ icon, label }: any) => (
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FDFDFD' },
-  
+
   bgCircleTop: { position: 'absolute', top: -height * 0.05, right: -width * 0.15, width: width * 0.7, height: width * 0.7, borderRadius: width, backgroundColor: '#FFF1F1', opacity: 0.7 },
   bgCircleBottom: { position: 'absolute', bottom: -height * 0.05, left: -width * 0.15, width: width * 0.6, height: width * 0.6, borderRadius: width, backgroundColor: '#FFF1F1', opacity: 0.5 },
 

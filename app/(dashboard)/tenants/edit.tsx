@@ -4,6 +4,7 @@ import { MaterialIcons, FontAwesome6, Ionicons, Feather } from '@expo/vector-ico
 import { useRouter, useLocalSearchParams } from 'expo-router'
 import useLoader from '@/hooks/useLoader'
 import { getTenantById, updateTenant } from '@/services/tenant'
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
 
@@ -36,7 +37,12 @@ const EditTenant = () => {
                     setIsKeyMoneyPaid(data.isKeyMoneyPaid);
                 }
             } catch (error) {
-                Alert.alert("Error", "Failed to load tenant data.");
+                Toast.show({
+                    type: 'error',
+                    text1: 'Error',
+                    text2: 'Could not load tenant details.',
+                    position: 'bottom'
+                })
             } finally {
                 hideLoader();
             }
@@ -46,7 +52,11 @@ const EditTenant = () => {
 
     const handleUpdate = async () => {
         if (!name || !phone || !rent) {
-            Alert.alert("Missing Details", "Full name, phone number and rent are required.");
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Please fill in all required fields.',
+            })
             return;
         }
 
@@ -61,10 +71,18 @@ const EditTenant = () => {
                 isKeyMoneyPaid,
             });
 
-            Alert.alert("Success", "Details updated successfully!");
+            Toast.show({
+                type: 'success',
+                text1: 'Success',
+                text2: 'Tenant updated successfully.',
+            })
             router.back();
         } catch (error) {
-            Alert.alert("Error", "Update failed.");
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Failed to update tenant.',
+            })
         } finally {
             hideLoader();
         }

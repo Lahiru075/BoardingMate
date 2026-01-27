@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { MaterialIcons, FontAwesome6, Ionicons } from '@expo/vector-icons'
 import useLoader from '@/hooks/useLoader'
 import { distributeBills } from '@/services/tenant'
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,18 +17,32 @@ const BillManager = () => {
 
   const handleDistribute = async () => {
     if (!totalElec || !totalWater) {
-      Alert.alert("Input Error", "Please enter total bill amounts.");
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Please fill in all required fields!',
+      })
       return;
     }
 
     showLoader();
     try {
       await distributeBills(selectedRoom, Number(totalElec), Number(totalWater));
-      Alert.alert("Success", `Bills split among tenants in ${selectedRoom}`);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Bills distributed successfully! ✅',
+      })
+
       setTotalElec('');
       setTotalWater('');
     } catch (error: any) {
-      Alert.alert("Error", error.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong! ❌',
+      })
     } finally {
       hideLoader();
     }

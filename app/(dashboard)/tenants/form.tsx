@@ -4,6 +4,7 @@ import { MaterialIcons, FontAwesome6, Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import useLoader from '@/hooks/useLoader'
 import { addTenant } from '@/services/tenant'
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
 
@@ -23,7 +24,13 @@ const AddTenant = () => {
 
   const handleSave = async () => {
     if (!name || !phone || !rent) {
-      Alert.alert("Missing Details", "Full name, phone number and rent are required.");
+
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Please fill in all required fields!'
+      })
+
       return;
     }
     showLoader();
@@ -38,10 +45,22 @@ const AddTenant = () => {
       };
 
       await addTenant(tenantData);
-      Alert.alert("Success", "Tenant registered successfully!");
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Tenant registered successfully! ✅'
+      });
+
       router.back();
     } catch (error) {
-      Alert.alert("Error", "Failed to register tenant.");
+
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Tenant registration failed! ❌'
+      });
+
     } finally {
       hideLoader();
     }
@@ -58,10 +77,10 @@ const AddTenant = () => {
       {/* 1. TOP NAVIGATION BAR (FIXED HEADER) */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.back()} style={styles.navBtn}>
-           <Ionicons name="arrow-back" size={22} color="#2D3436" />
+          <Ionicons name="arrow-back" size={22} color="#2D3436" />
         </TouchableOpacity>
-        <Text style={styles.headerTitleText}>Register <Text style={{color: '#FF5A5F'}}>Tenant</Text></Text>
-        <View style={{ width: 42 }} /> 
+        <Text style={styles.headerTitleText}>Register <Text style={{ color: '#FF5A5F' }}>Tenant</Text></Text>
+        <View style={{ width: 42 }} />
       </View>
 
       <KeyboardAvoidingView
@@ -69,11 +88,11 @@ const AddTenant = () => {
         style={{ flex: 1 }}
       >
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          
+
           {/* Card Wrapper */}
           <View style={styles.formWrapper}>
             <View style={styles.card}>
-              
+
               {/* Card Inner Header */}
               <View style={styles.cardHeader}>
                 <Text style={styles.welcomeText}>New Resident</Text>
@@ -191,7 +210,7 @@ const AddTenant = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FDFDFD' },
-  
+
   // Background Decorations
   bgCircleTop: {
     position: 'absolute', top: -height * 0.05, right: -width * 0.15,
@@ -205,19 +224,19 @@ const styles = StyleSheet.create({
   },
 
   // Fixed Navigation Header
-  topBar: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    paddingHorizontal: 25, 
-    paddingTop: 50, 
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 25,
+    paddingTop: 50,
     paddingBottom: 15,
-    zIndex: 10 
+    zIndex: 10
   },
-  navBtn: { 
-    width: 42, height: 42, borderRadius: 12, backgroundColor: 'white', 
-    alignItems: 'center', justifyContent: 'center', elevation: 3, 
-    shadowColor: '#000', shadowOpacity: 0.05 
+  navBtn: {
+    width: 42, height: 42, borderRadius: 12, backgroundColor: 'white',
+    alignItems: 'center', justifyContent: 'center', elevation: 3,
+    shadowColor: '#000', shadowOpacity: 0.05
   },
   headerTitleText: { fontSize: 20, fontWeight: '900', color: '#2D3436' },
 

@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { MaterialIcons, FontAwesome6, Ionicons, Feather } from '@expo/vector-icons'
 import { getTenantById, markAsPaid, deleteTenant } from '@/services/tenant'
 import useLoader from '@/hooks/useLoader'
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
 
@@ -31,25 +32,67 @@ const TenantDetails = () => {
   const handlePayment = async () => {
     Alert.alert("Confirm Payment", "Mark this month as paid and reset bills?", [
       { text: "Cancel" },
-      { text: "Confirm", onPress: async () => {
+      {
+        text: "Confirm",
+        onPress: async () => {
           showLoader();
-          await markAsPaid(id as string);
-          await loadTenant(); 
-          hideLoader();
-          Alert.alert("Success", "Payment updated!");
-      }}
+          try {
+            await markAsPaid(id as string);
+            await loadTenant();
+
+            Toast.show({
+              type: 'success',
+              text1: 'Payment Updated',
+              text2: 'Tenant marked as paid successfully! ✅',
+              position: 'bottom'
+            });
+
+          } catch (error) {
+
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+              text2: 'Something went wrong! ❌'
+            });
+
+          } finally {
+            hideLoader();
+          }
+        }
+      }
     ]);
   };
 
   const handleDelete = async () => {
+
     Alert.alert("Delete Tenant", "Are you sure you want to remove this tenant?", [
       { text: "Cancel" },
-      { text: "Delete", style: 'destructive', onPress: async () => {
+      {
+        text: "Delete",
+        style: 'destructive', 
+        onPress: async () => {
           showLoader();
-          await deleteTenant(id as string);
-          hideLoader();
-          router.back();
-      }}
+          try {
+            await deleteTenant(id as string);
+            hideLoader();
+
+            Toast.show({
+              type: 'success',
+              text1: 'Tenant Removed',
+              text2: 'Record deleted successfully 🗑️',
+            });
+
+            router.back(); 
+          } catch (error) {
+            hideLoader();
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+              text2: 'Failed to delete tenant ❌',
+            });
+          }
+        }
+      }
     ]);
   };
 
@@ -68,19 +111,19 @@ const TenantDetails = () => {
       {/* 1. TOP NAVIGATION BAR */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.back()} style={styles.navBtn}>
-           <Ionicons name="arrow-back" size={22} color="#2D3436" />
+          <Ionicons name="arrow-back" size={22} color="#2D3436" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Tenant <Text style={{color: '#FF5A5F'}}>Profile</Text></Text>
-        <TouchableOpacity 
+        <Text style={styles.headerTitle}>Tenant <Text style={{ color: '#FF5A5F' }}>Profile</Text></Text>
+        <TouchableOpacity
           onPress={() => router.push({ pathname: '/(dashboard)/tenants/edit', params: { id: id } })}
           style={styles.navBtn}
         >
-           <Feather name="edit-3" size={20} color="#FF5A5F" />
+          <Feather name="edit-3" size={20} color="#FF5A5F" />
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
+
         {/* 2. PROFILE SECTION */}
         <View style={styles.profileHeader}>
           <View style={styles.avatarContainer}>
@@ -92,7 +135,7 @@ const TenantDetails = () => {
             </View>
           </View>
           <Text style={styles.tenantName}>{tenant.name}</Text>
-          
+
           {/* Contact Actions */}
           <View style={styles.contactRow}>
             <TouchableOpacity style={styles.contactBtn} onPress={() => Linking.openURL(`tel:${tenant.phone}`)}>
@@ -109,7 +152,7 @@ const TenantDetails = () => {
         {/* 3. PAYMENT BREAKDOWN CARD */}
         <View style={styles.card}>
           <Text style={styles.cardHeaderTitle}>MONTHLY BREAKDOWN</Text>
-          
+
           <View style={styles.row}>
             <Text style={styles.rowLabel}>Base Rent</Text>
             <Text style={styles.rowValue}>Rs. {tenant.rentAmount}</Text>
@@ -133,26 +176,26 @@ const TenantDetails = () => {
 
         {/* 4. KEY MONEY CARD */}
         <View style={[styles.card, styles.keyMoneyCard]}>
-           <View style={[styles.keyIconBg, {backgroundColor: tenant.isKeyMoneyPaid ? '#E7F9F0' : '#FFF1F1'}]}>
-              <Ionicons name="key" size={20} color={tenant.isKeyMoneyPaid ? "#10B981" : "#FF5A5F"} />
-           </View>
-           <View style={{flex: 1, marginLeft: 15}}>
-              <Text style={styles.keyLabel}>Key Money Status</Text>
-              <Text style={[styles.keyStatus, {color: tenant.isKeyMoneyPaid ? '#10B981' : '#FF5A5F'}]}>
-                {tenant.isKeyMoneyPaid ? "Fully Settled" : "Payment Pending"}
-              </Text>
-           </View>
-           <Text style={styles.keyAmount}>Rs. {tenant.keyMoneyAmount}</Text>
+          <View style={[styles.keyIconBg, { backgroundColor: tenant.isKeyMoneyPaid ? '#E7F9F0' : '#FFF1F1' }]}>
+            <Ionicons name="key" size={20} color={tenant.isKeyMoneyPaid ? "#10B981" : "#FF5A5F"} />
+          </View>
+          <View style={{ flex: 1, marginLeft: 15 }}>
+            <Text style={styles.keyLabel}>Key Money Status</Text>
+            <Text style={[styles.keyStatus, { color: tenant.isKeyMoneyPaid ? '#10B981' : '#FF5A5F' }]}>
+              {tenant.isKeyMoneyPaid ? "Fully Settled" : "Payment Pending"}
+            </Text>
+          </View>
+          <Text style={styles.keyAmount}>Rs. {tenant.keyMoneyAmount}</Text>
         </View>
 
         {/* 5. MAIN ACTION BUTTONS */}
         <TouchableOpacity style={styles.mainPayBtn} onPress={handlePayment} activeOpacity={0.8}>
-           <MaterialIcons name="verified-user" size={20} color="white" />
-           <Text style={styles.mainPayBtnText}>MARK AS PAID</Text>
+          <MaterialIcons name="verified-user" size={20} color="white" />
+          <Text style={styles.mainPayBtnText}>MARK AS PAID</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
-           <Text style={styles.deleteBtnText}>Remove Tenant from Boarding</Text>
+          <Text style={styles.deleteBtnText}>Remove Tenant from Boarding</Text>
         </TouchableOpacity>
 
       </ScrollView>
@@ -162,7 +205,7 @@ const TenantDetails = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FDFDFD' },
-  
+
   // Background Blobs
   bgCircleTop: {
     position: 'absolute', top: -height * 0.05, right: -width * 0.15,
@@ -190,7 +233,7 @@ const styles = StyleSheet.create({
   roomBadge: { position: 'absolute', bottom: -5, right: -5, backgroundColor: '#FF5A5F', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 10, borderWidth: 3, borderColor: 'white' },
   roomBadgeText: { color: 'white', fontSize: 10, fontWeight: 'bold' },
   tenantName: { fontSize: 24, fontWeight: '900', color: '#2D3436' },
-  
+
   contactRow: { flexDirection: 'row', marginTop: 15 },
   contactBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', paddingHorizontal: 18, paddingVertical: 10, borderRadius: 15, marginHorizontal: 8, elevation: 3, shadowColor: '#000', shadowOpacity: 0.05 },
   contactBtnText: { marginLeft: 8, fontSize: 13, fontWeight: 'bold', color: '#2D3436' },

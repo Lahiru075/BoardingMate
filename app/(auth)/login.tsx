@@ -17,6 +17,7 @@ import {
   Dimensions 
 } from 'react-native'
 import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons'
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,7 +31,11 @@ const Login = () => {
 
     const handleLogin = async () => {
         if (!email || !password) {
-            Alert.alert('Missing Details', 'Please enter both email and password.');
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Please fill in all required fields!'
+            })
             return;
         }
         showLoader()
@@ -38,7 +43,11 @@ const Login = () => {
             await login(email, password);
             router.replace('/home');
         } catch (error: any) {
-            Alert.alert("Login Failed", "Invalid Email or Password.");
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Invalid email or password!'
+            })
         } finally {
             hideLoader()
         }
