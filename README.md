@@ -34,11 +34,13 @@ BoardingMate is a modern, cross-platform mobile application designed to simplify
 To run this project locally, follow these steps:
 
 1. **Clone the repository:**
-   ```bash
-   git clone <https://github.com/Lahiru075/BoardingMate.git>
-   cd BoardingMate
-   ```
-2. **Install dependencies:**
+
+  ```bash
+  git clone <https://github.com/Lahiru075/BoardingMate.git>
+  cd BoardingMate
+  ```
+3. **Install dependencies:**
+   
   ```bash
   npm install
   ```
@@ -79,5 +81,6 @@ The Android APK build for this project can be found at the following link:
 ---
 
 ## 👨‍💻 Developer Details
-Name: [Lahiru Lakshan Sanjeewa]
-Institute: [Institute of Software Engineering (IJSE)]
+**Name:** Lahiru Lakshan Sanjeewa
+
+**Institute:** Institute of Software Engineering (IJSE)
