@@ -18,6 +18,18 @@ BoardingMate is a modern, cross-platform mobile application designed to simplify
 
 ---
 
+## 📸 App Screenshots
+
+| Dashboard | Tenant List | Bill Splitter |
+|:---:|:---:|:---:|
+| <img src="screenshots/home.jpeg" width="200" /> | <img src="screenshots/list.jpeg" width="200" /> | <img src="screenshots/bills.jpeg" width="200" /> |
+
+| Tenant Profile | Register | Login |
+|:---:|:---:|:---:|
+| <img src="screenshots/profile.jpeg" width="200" /> | <img src="screenshots/register.jpeg" width="200" /> | <img src="screenshots/login.jpeg" width="200" /> |
+
+---
+
 ## 🚀 Tech Stack
 
 - **Frontend:** React Native (Expo Go)
@@ -39,7 +51,7 @@ To run this project locally, follow these steps:
   git clone https://github.com/Lahiru075/BoardingMate.git
   cd BoardingMate
   ```
-3. **Install dependencies:**
+2. **Install dependencies:**
    
   ```bash
   npm install
@@ -47,8 +59,8 @@ To run this project locally, follow these steps:
 
 3. **Configure Environment Variables:**
 
-Create a `.env` file in the **root directory** and add your Firebase credentials  
-(make sure they are prefixed with `EXPO_PUBLIC_`):
+Create a `.env` file in the **root directory** and add your Firebase credentials  (make sure they are prefixed with `EXPO_PUBLIC_`):
+Note: Do not push your .env file to version control.
 
   ```Env
   EXPO_PUBLIC_FIREBASE_API_KEY=your_api_key
