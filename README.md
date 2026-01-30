@@ -22,11 +22,11 @@ BoardingMate is a modern, cross-platform mobile application designed to simplify
 
 | Dashboard | Tenant List | Bill Splitter |
 |:---:|:---:|:---:|
-| <img src="screenshots/home.png" width="200" /> | <img src="screenshots/list.png" width="200" /> | <img src="screenshots/bills.png" width="200" /> |
+| <img src="screenshots/home.jpeg" width="200" /> | <img src="screenshots/list.jpeg" width="200" /> | <img src="screenshots/bills.jpeg" width="200" /> |
 
 | Tenant Profile | Register | Login |
 |:---:|:---:|:---:|
-| <img src="screenshots/profile.png" width="200" /> | <img src="screenshots/register.png" width="200" /> | <img src="screenshots/login.png" width="200" /> |
+| <img src="screenshots/profile.jpeg" width="200" /> | <img src="screenshots/register.jpeg" width="200" /> | <img src="screenshots/login.jpeg" width="200" /> |
 
 ---
 
