@@ -36,7 +36,7 @@ To run this project locally, follow these steps:
 1. **Clone the repository:**
 
   ```bash
-  git clone <https://github.com/Lahiru075/BoardingMate.git>
+  git clone https://github.com/Lahiru075/BoardingMate.git
   cd BoardingMate
   ```
 3. **Install dependencies:**
