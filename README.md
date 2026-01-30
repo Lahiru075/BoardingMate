@@ -69,6 +69,7 @@ Note: Do not push your .env file to version control.
   EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
   EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
   EXPO_PUBLIC_FIREBASE_APP_ID=your_app_id
+  EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
   ```
 
 4. **Start the development server:**
