@@ -66,14 +66,14 @@ export const getTenantById = async (tenantId: string) => {
 
 export const markAsPaid = async (id: string) => {
     const docRef = doc(db, "tenants", id);
-    
+
     const now = new Date();
     const yearMonth = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
 
     await updateDoc(docRef, {
-        lastPaidMonth: yearMonth, 
+        lastPaidMonth: yearMonth,
         lastPaidDate: now.toISOString(),
-        electricityShare: 0, 
+        electricityShare: 0,
         waterShare: 0
     });
 };
@@ -112,7 +112,7 @@ export const distributeBills = async (roomNo: string, totalElec: number, totalWa
     // get all tenants in this room
     const q = query(collection(db, "tenants"), where("roomNo", "==", roomNo), where("userId", "==", user.uid));
     const querySnapshot = await getDocs(q);
-    
+
     const count = querySnapshot.size;
     if (count === 0) throw new Error("No tenants found in this room!");
 
@@ -138,8 +138,8 @@ export const distributeBills = async (roomNo: string, totalElec: number, totalWa
     }
 
     // if no one has paid.. distribute the bills
-    const elecShare = totalElec / count;
-    const waterShare = totalWater / count;
+    const elecShare = Number((totalElec / count).toFixed(2));
+    const waterShare = Number((totalWater / count).toFixed(2));
 
     const batch = writeBatch(db);
     querySnapshot.forEach((doc) => {

@@ -1,7 +1,8 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, updateEmail, updatePassword } from "firebase/auth"
 import { auth, db } from "./firebase"
 import { doc, setDoc } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { use } from "react";
 
 export const login = async (email: string, password: string) => {
     return await signInWithEmailAndPassword(auth, email, password);

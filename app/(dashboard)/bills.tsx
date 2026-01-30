@@ -52,7 +52,7 @@ const BillManager = () => {
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: 'Something went wrong! ❌',
+        text2: error.message + ' ❌',
       })
     } finally {
       hideLoader();
