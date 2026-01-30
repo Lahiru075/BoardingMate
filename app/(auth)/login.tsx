@@ -68,7 +68,7 @@ const Login = () => {
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={styles.inner}>
 
-                        {/* 1. TOP SECTION (LOGO & TITLES) - Height adu kala */}
+                        {/* 1. TOP SECTION (LOGO & TITLES) */}
                         <View style={styles.topSection}>
                             <View style={styles.logoCircle}>
                                 <Ionicons name="home" size={38} color="#FF5A5F" />
