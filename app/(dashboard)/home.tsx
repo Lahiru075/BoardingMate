@@ -75,6 +75,19 @@ const Home = () => {
     }
   }
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      return "Good Morning";
+    } else if (hour >= 12 && hour < 17) {
+      return "Good Afternoon";
+    } else if (hour >= 17 && hour < 21) {
+      return "Good Evening";
+    } else {
+      return "Good Night";
+    }
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -108,7 +121,7 @@ const Home = () => {
 
         {/* 3. WELCOME SECTION */}
         <View style={styles.greetingSection}>
-          <Text style={styles.welcomeText}>Good Morning,</Text>
+          <Text style={styles.welcomeText}>{getGreeting()},</Text>
           <Text style={styles.nameText}>Mr. {user?.displayName || 'Landlord'} 👋</Text>
         </View>
 
