@@ -87,7 +87,7 @@ Scan the QR code using the Expo Go app on Android or iOS.
 
 The Android APK build for this project can be found at the following link:
 
-🔗 **[Download BoardingMate APK (Google Drive)](https://drive.google.com/file/d/170wOsykgb2OAYNKvcLbo3-KT1BmW2cz8/view?usp=sharing)**
+🔗 **[Download BoardingMate APK (Google Drive)](https://drive.google.com/file/d/1goJWeDwOZNeJPAmWevUfTcmwB_Oyktst/view?usp=sharing)**
 
 > ℹ️ Note: You can also find the `.apk` file inside the **BoardingMate** folder on Google Drive or inside the `build` folder of this repository (if uploaded).
 

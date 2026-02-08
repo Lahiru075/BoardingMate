@@ -43,6 +43,5 @@ app-example
 /android
 
 # env files
-.env
-.env.*
 !.env.example
+config.bat
