@@ -20,6 +20,7 @@ const RootLayout = () => {
         </View>
       </AuthProvider>
     </LoaderProvider>
+    
   )
 }
 
